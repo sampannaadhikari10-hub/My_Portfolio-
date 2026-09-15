@@ -673,6 +673,13 @@
     .term-out { color: var(--muted); }
     .term-sys { color: var(--subtle); }
     .term-err { color: var(--danger); }
+    .term-ai { color: var(--accent-bright); }
+    .term-ai .term-ai-tag { color: var(--accent); font-family: var(--font-mono); margin-right: 0.5em; }
+    .term-thinking { animation: term-thinking-pulse 1s ease-in-out infinite; }
+    @keyframes term-thinking-pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.9; }
+    }
     .term-prompt { color: var(--accent); }
     .term-input-row {
       display: flex;
@@ -1738,7 +1745,7 @@
           <p class="label">04 — Play</p>
           <h2 class="heading">Bored? Play something.</h2>
           <p class="muted" style="margin-top:1rem;max-width:36rem;font-size:0.875rem;line-height:1.7;">
-            Four tiny games in the browser. No download, no account — just kill a few minutes. Best scores stay on this device.
+            Six tiny games in the browser. No download, no account — just kill a few minutes. Best scores stay on this device.
           </p>
         </header>
 
@@ -1747,6 +1754,8 @@
           <button type="button" class="game-tab" data-game="snake" role="tab">Snake</button>
           <button type="button" class="game-tab" data-game="guess" role="tab">Guess</button>
           <button type="button" class="game-tab" data-game="car" role="tab">Car</button>
+          <button type="button" class="game-tab" data-game="pong" role="tab">Pong</button>
+          <button type="button" class="game-tab" data-game="breakout" role="tab">Breakout</button>
         </div>
 
         <div class="game-howto" id="game-howto" hidden>
@@ -1906,7 +1915,7 @@
     const SUGGESTIONS = [
       "whoami", "cat about.txt", "ls skills", "contact",
       "neofetch", "help",
-      "play", "joke", "coffee", "hi"
+      "play", "joke", "quote", "coffee", "hi", "roll", "flip", "42"
     ];
 
     // Unlock arcade via terminal
@@ -1978,11 +1987,30 @@
           "  play              unlock the arcade",
           "  exit              close the arcade",
           "  joke              programmer joke",
+          "  quote             a quote or line of advice",
           "  coffee            fuel check",
           "  hi                say hello",
           "  ping              pong",
           "  uptime            session time",
-          "  help              this list"
+          "  roll              roll a dice",
+          "  flip              flip a coin",
+          "  42                the answer",
+          "  weather           forecast (sort of)",
+          "  sl                oops, typo",
+          "  credits           who built this",
+          "  help              this list",
+          "",
+          "more",
+          "  whois             quick id lookup",
+          "  ifconfig          fake network info",
+          "  traceroute        trace the hops",
+          "  ssh               connect somewhere",
+          "  curl              fetch something",
+          "  1337              leet speak check",
+          "  flip table        when it's that kind of day",
+          "  achievements      see what you've unlocked",
+          "",
+          "there may be more hidden around. good luck."
         );
       }
 
@@ -2049,7 +2077,66 @@
           "The surface is a lie. Read the source.",
           "Slow is fine. Shallow is not.",
           "Curiosity is the best exploit.",
-          "Write code that survives contact with reality."
+          "Write code that survives contact with reality.",
+          "Talk is cheap. Show me the code. — Linus Torvalds",
+          "First, solve the problem. Then, write the code.",
+          "The best error message is the one that never shows up.",
+          "Simplicity is prerequisite for reliability. — Dijkstra",
+          "Programs must be written for people to read.",
+          "Ship something small. Learn something big.",
+          "Logs don't lie. People do.",
+          "The bug is always in the last place you look.",
+          "Permissions are a love language.",
+          "Root is a responsibility, not a flex.",
+          "Read the man page. Then read it again.",
+          "Automation is just future-you saying thanks.",
+          "A clean commit is a kind of honesty.",
+          "Don't optimize what you don't measure.",
+          "Fail loudly. Fail early. Fail usefully.",
+          "Security is a process, not a product.",
+          "Abstraction leaks. Design for the drip.",
+          "Code is read more than it is written.",
+          "Simplicity scales. Cleverness breaks.",
+          "Your future self is reviewing this.",
+          "Curiosity compounds faster than interest.",
+          "Nepal time, global problems.",
+          "Fourteen is not a limit. It's a head start.",
+          "Learn the kernel. Then learn the edge.",
+          "Quiet builders move mountains.",
+          "One more print statement won't hurt. (It will.)",
+          "If it compiles, you're only halfway done.",
+          "Version control is time travel with manners.",
+          "Document the why, not just the what.",
+          "Trust the process. Verify the hash.",
+          "The stack trace is a map, not a threat.",
+          "Good APIs are boring. Boring is good.",
+          "Delete dead code like it owes you money.",
+          "Make it work. Make it right. Make it fast.",
+          "Night commits hit different in Kathmandu.",
+          "Assume breach. Design recovery.",
+          "Small functions. Big ideas.",
+          "Read error messages like love letters from the machine.",
+          "A rubber duck is the cheapest senior engineer.",
+          "Consistency beats intensity over years.",
+          "Don't chase every framework. Chase fundamentals.",
+          "C taught me pain. Pain taught me care.",
+          "Python is friendly until the types aren't.",
+          "JavaScript will surprise you. Always.",
+          "Networks fail. Design for the failure path.",
+          "Privacy is a feature users feel, not see.",
+          "Ship at 80%. Polish with feedback.",
+          "The silent process is the suspicious one.",
+          "Name things like your team will inherit them.",
+          "Tests are insurance for future chaos.",
+          "Sleep is a performance optimization.",
+          "Ask better questions than you write answers.",
+          "Build in public. Learn in private.",
+          "A closed port is a story. An open one is a choice.",
+          "You're not behind. You're building.",
+          "Stay hungry. Stay curious. Stay kind.",
+          "Deleted code is debugged code.",
+          "Ship it small. Ship it often.",
+          "Patience is the whole game when you're learning."
         ];
         return out(lines[Math.floor(Math.random() * lines.length)]);
       }
@@ -2098,7 +2185,7 @@
         unlockPlayArcade(true);
         return out(
           "arcade unlocked.",
-          "flappy · snake · guess · car",
+          "flappy · snake · guess · car · pong · breakout",
           "scrolling you there now…",
           "type exit to close the arcade."
         );
@@ -2123,7 +2210,67 @@
           "A SQL query walks into a bar, walks up to two tables and asks: can I join you?",
           "I would tell you a UDP joke, but you might not get it.",
           "Debugging: being the detective in a crime movie where you are also the murderer.",
-          "!false — it's funny because it's true."
+          "!false — it's funny because it's true.",
+          "Why do Java developers wear glasses? Because they don't C#.",
+          "How many programmers does it take to change a light bulb? None — it's a hardware problem.",
+          "A programmer's wife says: get milk, and if there are eggs, get a dozen. He came home with 12 milks.",
+          "There's no place like 127.0.0.1.",
+          "I changed my password to 'incorrect' so when I forget it, the computer reminds me.",
+          "Why was the JavaScript developer sad? Because he didn't Node how to Express himself.",
+          "Why did the developer go broke? Because they used up all their cache.",
+          "Git commit -m 'fix' — the most honest message.",
+          "It works on my machine. Then we'll ship your machine.",
+          "Recursive function: see recursive function.",
+          "99 little bugs in the code — take one down, patch it around — 127 little bugs in the code.",
+          "A QA engineer walks into a bar. Orders 1 beer, 0 beers, -1 beers, null beers...",
+          "Knock knock. Who's there? Race condition. Race condition who? Sorry, wrong order.",
+          "sudo make me a sandwich — okay.",
+          "The cloud is just someone else's computer with better marketing.",
+          "I don't always test my code, but when I do, I do it in production.",
+          "What's a programmer's favorite hangout? Foo Bar.",
+          "Real programmers count from 0.",
+          "My relationship status: 404 not found.",
+          "Why did the developer quit? He didn't get arrays.",
+          "A UDP packet walks into a bar. The bartender doesn't acknowledge him.",
+          "Algorithm: a word programmers use when they don't want to explain what they did.",
+          "To understand recursion, you must first understand recursion.",
+          "Why did the programmer get stuck in the shower? The instructions said: lather, rinse, repeat.",
+          "Hardware: the part you can kick. Software: the part you can only swear at.",
+          "I'm fluent in four languages: Python, sarcasm, C, and overconfidence.",
+          "Why don't programmers like nature? Too many bugs.",
+          "How do you generate a random string? Put a first-year in vim and say exit.",
+          "Two hard things in CS: cache invalidation, naming things, and off-by-one errors.",
+          "I would tell you an HTTP joke but I'm not sure you'd GET it.",
+          "What's a pirate's favorite language? R.",
+          "A null pointer walks into a bar. The bartender crashes.",
+          "May the source be with you.",
+          "Why do programmers mix up Halloween and Christmas? Because Oct 31 == Dec 25.",
+          "My code doesn't work, I have no idea why. My code works, I have no idea why.",
+          "It's not a bug, it's an undocumented feature.",
+          "Why was the computer cold? It left its Windows open.",
+          "What's the object-oriented way to become wealthy? Inheritance.",
+          "I love pressing F5. It's so refreshing.",
+          "Why did the CSS developer break up? Too many issues with their selector.",
+          "A clean desk is a sign of a broken computer.",
+          "Why was the engineer always calm? Great exception handling.",
+          "I put my root password on a sticky note. Security through obscurity.",
+          "Why did the junior push to main? Production is the best test environment.",
+          "Why do security engineers make terrible comedians? Jokes get blocked by the firewall.",
+          "Debugging is like being a cyber detective with trust issues.",
+          "I tried to catch some fog earlier. I mist.",
+          "Why did the scarecrow become a developer? Outstanding in his field.",
+          "A byte walks into a bar and orders a pint. Sorry, we don't serve your type.",
+          "Why was the function so sad? Too many arguments with its parents.",
+          "In a world without layers, only the backend remains.",
+          "Why do backend developers make bad partners? They leave you hanging on async.",
+          "There are two kinds of people: those who finish what they start",
+          "C++ is like teenage sex: everyone talks about it, nobody really knows how.",
+          "An SEO expert walks into a bar, bars, pub, tavern, lounge...",
+          "I told my computer I needed a break. It went to sleep.",
+          "What do you call 8 hobbits? A hobbyte.",
+          "Why was the mobile app cold? It left its Windows open.",
+          "A programmer walks into a bar and orders 1.0000001 beers.",
+          "Why did the database admin leave? Too many one-to-many relationships."
         ];
         return out(jokes[Math.floor(Math.random() * jokes.length)]);
       }
@@ -2153,8 +2300,8 @@
         );
       }
 
-      if (key === "hello" || key === "hi" || key === "hey") {
-        return out("hey. type help — or play if you're bored.");
+      if (key === "hello" || key === "hi" || key === "hey" || key === "yo" || key === "sup" || key === "howdy") {
+        return [{ kind: "__ai_greet__", text: "" }];
       }
 
       if (key === "ping") {
@@ -2206,7 +2353,249 @@
         return [{ kind: "sys", text: "__CLEAR__" }];
       }
 
+      if (key === "roll" || key === "dice") {
+        const n = 1 + Math.floor(Math.random() * 6);
+        const faces = ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
+        return out(`${faces[n - 1]} you rolled a ${n}`);
+      }
+
+      if (key === "flip" || key === "coin") {
+        return out(Math.random() < 0.5 ? "heads." : "tails.");
+      }
+
+      if (key === "vim" || key === "nano" || key === "emacs") {
+        return out(
+          "opening editor...",
+          "just kidding. type :wq if you know, you know."
+        );
+      }
+
+      if (key === "sl") {
+        return out(
+          "      ====        ________                ___________",
+          "  _D _|  |_______/        \\__I_I_____===__|_________|",
+          "   |(_)---  |   H\\________/ |   |        =|___ ___|",
+          "   /     |  |   H  |  |     |   |         ||_| |_||",
+          "  |      |  |   H  |__--------------------| [___] |",
+          "  | ________|___H__/__|_____/[][]~\\_______|       |",
+          "  |/ |   |-----------I_____I [][] []  D   |=======|",
+          "typo detected. did you mean 'ls'?"
+        );
+      }
+
+      if (key === "credits" || key === "about site") {
+        return out(
+          "built from scratch by " + site.name + ".",
+          "no template, no framework — just HTML, CSS, and JS.",
+          "type 'projects' to see what else is cooking."
+        );
+      }
+
+      if (key === "42") {
+        return out("the answer to life, the universe, and everything.");
+      }
+
+      if (key === "weather") {
+        return out(
+          "forecast: 100% chance of shipping code.",
+          "check a real weather app for the rest."
+        );
+      }
+
+      // —— hidden commands (not in suggestions, only in help) ——
+      if (key === "whois") {
+        return out(
+          `handle:  ${site.handle}`,
+          `age:     ${site.age}`,
+          `based:   ${site.country}`,
+          "status:  still figuring it out, on purpose"
+        );
+      }
+
+      if (key === "ifconfig" || key === "ipconfig") {
+        return out(
+          "lo0: flags=up mtu 65536",
+          "     inet 127.0.0.1  netmask 255.0.0.0",
+          "eth0: status: pretending to be a real network device",
+          "      inet 192.168.1.awesome"
+        );
+      }
+
+      if (key === "traceroute" || key === "tracert") {
+        return out(
+          " 1  your-browser        0.1 ms",
+          " 2  this-website        0.4 ms",
+          " 3  " + site.handle + "'s-brain     14 years",
+          "trace complete. you were the destination all along."
+        );
+      }
+
+      if (key === "ssh" || key.startsWith("ssh ")) {
+        return out(
+          "connecting to mainframe...",
+          "...",
+          "just kidding, there's no mainframe. type 'contact' for the real thing."
+        );
+      }
+
+      if (key === "curl" || key.startsWith("curl ")) {
+        return out(
+          "HTTP/1.1 200 OK",
+          "you just curled a static site pretending to be an API.",
+          "respect for trying though."
+        );
+      }
+
+      if (key === "1337" || key === "leet") {
+        return out("y0u sp34k l33t. r3sp3ct.");
+      }
+
+      if (key === "flip table" || key === "tableflip") {
+        return out("(╯°□°）╯︵ ┻━┻", "...let me fix that.", "┬─┬ ノ( ゜-゜ノ)");
+      }
+
+      if (key === "iddqd" || key === "idkfa") {
+        return out("god mode + all weapons.", "wrong terminal. wrong decade. respect the reference though.");
+      }
+
+      if (key === "how do i exit vim" || key === "exit vim") {
+        return out("nobody knows. legend says he's still in there.", "try :wq and hope for the best.");
+      }
+
+      if (key === "sudo make me a sandwich" || key === "make me a sandwich") {
+        return out("okay.", "here you go: 🥪", "(sudo makes everything easier.)");
+      }
+
+      if (key === "sudo hire me" || key === "hire me") {
+        return out(
+          "permission granted — but you'll have to email them first.",
+          "type 'contact' for the address."
+        );
+      }
+
+      if (key === "achievements" || key === "achievement") {
+        const found = [
+          window.__playUnlocked ? "[x] unlocked the arcade" : "[ ] unlock the arcade — type play",
+          "[x] opened the terminal",
+          historyLog.length >= 10 ? "[x] typed 10+ commands" : "[ ] type 10+ commands",
+        ];
+        return out("achievements", ...found.map((f) => "  " + f));
+      }
+
+      if (key === "konami") {
+        return out(
+          "there's an old cheat code for that.",
+          "↑ ↑ ↓ ↓ ← → ← → B A",
+          "try it on your keyboard, not in here."
+        );
+      }
+
+      if (key === "root" || key === "su") {
+        return err("nice try. root doesn't live here anymore.");
+      }
+
+      if (key === "rickroll" || key === "never gonna give you up") {
+        return out("you've been rickrolled.", "(no link, you're welcome.)");
+      }
+
+      if (key === "are you ai" || key === "are you real" || key === "who are you") {
+        return [{ kind: "__ai_greet__", text: "" }];
+      }
+
+
+      if (key === "kill" || key === "kill -9" || key.startsWith("kill ") || key === "pkill" || key.startsWith("pkill ")) {
+        return err("nice try you little engineer 😉");
+      }
+
+      if (
+        key === ":(){ :|:& };:" ||
+        key === "forkbomb" ||
+        key === "fork bomb" ||
+        key === "fork" ||
+        key.includes(":(){") ||
+        key.includes(":|:&")
+      ) {
+        return err("kernel refuses. this is a browser, not a bomb range.");
+      }
+
+      if (key === "apt update" || key === "apt-get update" || key === "sudo apt update") {
+        return out(
+          "Hit:1 https://repo.nepal.local stable InRelease",
+          "Get:2 https://repo.nepal.local stable/main amd64 Packages",
+          "Reading package lists... done",
+          "All packages are up to date."
+        );
+      }
+
+      if (key === "apt upgrade" || key === "apt-get upgrade" || key === "sudo apt upgrade") {
+        return out(
+          "Calculating upgrade... done",
+          "0 upgraded, 0 newly installed.",
+          "You are already on the latest curiosity build."
+        );
+      }
+
+      if (key.startsWith("apt install ") || key.startsWith("apt-get install ") || key.startsWith("sudo apt install ")) {
+        const pkg = key.replace(/^sudo\s+/, "").replace(/^apt(-get)?\s+install\s+/, "").trim() || "something";
+        return out(
+          `The following NEW packages will be installed:`,
+          `  ${pkg}`,
+          `Setting up ${pkg} (14.0-nepal)...`,
+          `done. (simulated — nothing left your browser)`
+        );
+      }
+
+      if (key === "apt" || key === "apt-get") {
+        return out("usage: apt update | apt upgrade | apt install <pkg>");
+      }
+
+      if (key === "top" || key === "htop") {
+        return out(
+          "PID   USER            CPU%  MEM%  COMMAND",
+          "1     root_access_13  0.1   0.2   systemd (browser)",
+          "42    root_access_13  2.4   1.1   lab-terminal",
+          "128   root_access_13  0.0   0.4   flappy (idle)",
+          "256   root_access_13  0.0   0.3   snake (idle)",
+          "512   root_access_13  0.2   0.5   curiosity",
+          "press q to... wait, this isn't real top."
+        );
+      }
+
+      if (key === "ps" || key === "ps aux" || key === "ps -ef") {
+        return out(
+          "USER            PID  STAT  COMMAND",
+          "root_access_13    1  Ss    /sbin/init",
+          "root_access_13   42  S+    ./lab",
+          "root_access_13  128  S     [arcade]",
+          "root_access_13  512  R     curiosity --forever"
+        );
+      }
+
+      if (key === "echo" || key.startsWith("echo ")) {
+        const msg = key === "echo" ? "" : raw.trim().slice(5);
+        return out(msg);
+      }
+
+      if (key === "who" || key === "w") {
+        return out(`${site.handle}  pts/0  ${site.country.toLowerCase()}  still learning`);
+      }
+
+      if (key === "sl") {
+        return out(
+          "      ====        ________                ___________",
+          "  _D _|  |_______/        \\\\__I_I_____===__|_________|",
+          "   |(_)---  |   H\\\\________/ |   |        =|___ ___|",
+          "   /     |  |   H  |  |     |   |         ||_| |_||",
+          "choo choo. (you typed sl, not ls.)"
+        );
+      }
+
+      if (key === "yes") {
+        return out("y", "y", "y", "y", "y", "ok that's enough.");
+      }
+
       return err(`${cmd}: command not found. type help`);
+
     }
 
     const BOOT = [
@@ -2228,6 +2617,11 @@
         p.className = "term-line term-" + line.kind;
         if (line.kind === "in") {
           p.innerHTML = `<span class="term-prompt">$</span> ${escapeHtml(line.text)}`;
+        } else if (line.kind === "ai") {
+          p.innerHTML = `<span class="term-ai-tag">ai&gt;</span>${escapeHtml(line.text)}`;
+        } else if (line.kind === "thinking") {
+          p.className += " term-thinking";
+          p.textContent = line.text;
         } else {
           p.textContent = line.text;
         }
@@ -2261,19 +2655,47 @@
       return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
-    function submit(cmd) {
+    function delay(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    const AI_GREETINGS = [
+      ["hey! good to see you in here.", "I'm just a little script, but I'll do my best — type help to see what I can do."],
+      ["hi there 👋", "poking around the terminal? smart move. try 'projects' or 'joke' next."],
+      ["oh, hello.", "didn't expect a visitor. everything's stable here. how can I help?"],
+      ["hey — " + (typeof site !== "undefined" ? site.name.split(" ")[0] : "you") + "'s AI-ish terminal here.", "no backend, no API key, just javascript pretending. ask away with 'help'."],
+      ["sup.", "still compiling thoughts over here. try 'fortune' if you want a random one."],
+      ["hello, human.", "confirmed: you are not a bot. probably. type 'help' to continue."]
+    ];
+
+    async function submit(cmd) {
       window.__termTouched = true;
       const trimmed = cmd.trim();
       if (!trimmed) return;
       const result = runCommand(trimmed);
+      historyLog = [trimmed, ...historyLog.filter((x) => x !== trimmed)].slice(0, 40);
+      histIndex = -1;
+      value = "";
+
+      if (result[0]?.kind === "__ai_greet__") {
+        lines = [...lines, { kind: "in", text: trimmed }];
+        render();
+        await delay(280 + Math.random() * 260);
+        lines = [...lines, { kind: "thinking", text: "ai is typing" }];
+        render();
+        await delay(650 + Math.random() * 500);
+        lines = lines.slice(0, -1);
+        const reply = AI_GREETINGS[Math.floor(Math.random() * AI_GREETINGS.length)];
+        lines = [...lines, ...reply.map((t) => ({ kind: "ai", text: t }))];
+        render();
+        return;
+      }
+
       if (result[0]?.text === "__CLEAR__") {
         lines = [{ kind: "sys", text: `lab  ·  ${site.country.toLowerCase()}  ·  type help` }];
       } else {
         lines = [...lines, { kind: "in", text: trimmed }, ...result];
       }
-      historyLog = [trimmed, ...historyLog.filter((x) => x !== trimmed)].slice(0, 40);
-      histIndex = -1;
-      value = "";
       render();
     }
 
@@ -3141,7 +3563,260 @@
         };
       })();
 
-      const all = { flappy, snake: snakeGame, guess: guessGame, car: carGame };
+
+      // ========== PONG ==========
+      const pongGame = (function () {
+        const BEST_KEY = "pong_best_root13";
+        let best = parseInt(localStorage.getItem(BEST_KEY) || "0", 10) || 0;
+        let state, score, paddleY, ball, aiY, last;
+
+        const PADDLE_H = 70, PADDLE_W = 10, BALL_R = 8;
+
+        function reset() {
+          score = 0;
+          paddleY = H / 2 - PADDLE_H / 2;
+          aiY = H / 2 - PADDLE_H / 2;
+          ball = { x: W / 2, y: H / 2, vx: 3.5, vy: (Math.random() * 2 - 1) * 2.5 };
+          setScore(0, best);
+        }
+        function die() {
+          state = "dead";
+          let subtitle = "Score " + score;
+          if (score > best) {
+            best = score; localStorage.setItem(BEST_KEY, String(best));
+            subtitle = "New best · " + best;
+          }
+          setScore(score, best);
+          setOverlay("Game over", subtitle, true);
+          playBtn.textContent = "Play again";
+        }
+        function update() {
+          if (state !== "play") return;
+          ball.x += ball.vx; ball.y += ball.vy;
+          if (ball.y < BALL_R || ball.y > H - BALL_R) ball.vy *= -1;
+          // player paddle (left)
+          if (ball.x - BALL_R < 24 + PADDLE_W && ball.x > 24 &&
+              ball.y > paddleY && ball.y < paddleY + PADDLE_H && ball.vx < 0) {
+            ball.vx = Math.abs(ball.vx) * 1.05;
+            const hit = (ball.y - paddleY) / PADDLE_H - 0.5;
+            ball.vy = hit * 7;
+            score++; setScore(score, best);
+          }
+          // AI paddle (right)
+          const target = ball.y - PADDLE_H / 2;
+          aiY += (target - aiY) * 0.08;
+          aiY = Math.max(0, Math.min(H - PADDLE_H, aiY));
+          if (ball.x + BALL_R > W - 24 - PADDLE_W && ball.x < W - 24 &&
+              ball.y > aiY && ball.y < aiY + PADDLE_H && ball.vx > 0) {
+            ball.vx = -Math.abs(ball.vx) * 1.03;
+          }
+          if (ball.x < 0) die();
+          if (ball.x > W) { ball.x = W / 2; ball.y = H / 2; ball.vx = -3.5; ball.vy = (Math.random() * 2 - 1) * 2; }
+        }
+        function draw() {
+          ctx.fillStyle = "#070908"; ctx.fillRect(0, 0, W, H);
+          ctx.strokeStyle = "rgba(168,201,173,0.15)";
+          ctx.setLineDash([8, 10]);
+          ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = "#a8c9ad";
+          ctx.fillRect(24, paddleY, PADDLE_W, PADDLE_H);
+          ctx.fillStyle = "#5d665f";
+          ctx.fillRect(W - 24 - PADDLE_W, aiY, PADDLE_W, PADDLE_H);
+          ctx.beginPath(); ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI * 2); ctx.fillStyle = "#c5ddc8"; ctx.fill();
+          if (state === "play") {
+            ctx.font = "600 36px Syne, sans-serif";
+            ctx.fillStyle = "rgba(232,238,233,0.12)";
+            ctx.textAlign = "center";
+            ctx.fillText(String(score), W / 2, 48);
+          }
+        }
+        function loop() {
+          update(); draw();
+          if (state === "play") raf = requestAnimationFrame(loop);
+        }
+        function movePaddle(y) {
+          paddleY = Math.max(0, Math.min(H - PADDLE_H, y - PADDLE_H / 2));
+        }
+        return {
+          name: "pong", label: "Pong",
+          hint: "Mouse · Touch · ↑↓",
+          controls: "Move your paddle. Don't let the ball past.",
+          howto: "Classic Pong. Move your left paddle with mouse/touch or arrow keys. Bounce the ball past the AI. Each bounce scores. Miss and it's over.",
+          activate() {
+            stopLoop(); reset(); state = "ready";
+            setOverlay("", "", false);
+            hint.textContent = this.hint; controlsHint.textContent = this.controls;
+            titleEl.textContent = this.label;
+            playBtn.textContent = "Play";
+            clearTouch();
+            addTouch("▲", () => { if (state === "play") paddleY = Math.max(0, paddleY - 28); });
+            addTouch("▼", () => { if (state === "play") paddleY = Math.min(H - PADDLE_H, paddleY + 28); });
+            draw();
+          },
+          action(fromButton) {
+            if (state === "ready" || state === "dead") {
+              if (!fromButton) return;
+              reset(); state = "play"; setOverlay("", "", false);
+              playBtn.textContent = "Playing…";
+              loop();
+            }
+          },
+          key(e) {
+            if (state !== "play") return;
+            if (e.code === "ArrowUp" || e.code === "KeyW") { e.preventDefault(); paddleY = Math.max(0, paddleY - 24); }
+            if (e.code === "ArrowDown" || e.code === "KeyS") { e.preventDefault(); paddleY = Math.min(H - PADDLE_H, paddleY + 24); }
+          },
+          pointer(y) {
+            if (state === "play") movePaddle(y);
+          },
+          deactivate() { stopLoop(); state = "ready"; }
+        };
+      })();
+
+      // ========== BREAKOUT ==========
+      const breakoutGame = (function () {
+        const BEST_KEY = "breakout_best_root13";
+        let best = parseInt(localStorage.getItem(BEST_KEY) || "0", 10) || 0;
+        let state, score, paddleX, ball, bricks, rows, cols;
+
+        const PADDLE_W = 80, PADDLE_H = 12, BALL_R = 7;
+
+        function buildBricks() {
+          rows = 5; cols = 8;
+          bricks = [];
+          const bw = (W - 40) / cols;
+          for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+              bricks.push({
+                x: 20 + c * bw, y: 50 + r * 22,
+                w: bw - 4, h: 16,
+                alive: true,
+                color: r < 2 ? "#a8c9ad" : r < 4 ? "#7aa383" : "#5d665f",
+              });
+            }
+          }
+        }
+        function reset() {
+          score = 0;
+          paddleX = W / 2 - PADDLE_W / 2;
+          ball = { x: W / 2, y: H - 80, vx: 3.2, vy: -3.8 };
+          buildBricks();
+          setScore(0, best);
+        }
+        function die() {
+          state = "dead";
+          let subtitle = "Score " + score;
+          if (score > best) {
+            best = score; localStorage.setItem(BEST_KEY, String(best));
+            subtitle = "New best · " + best;
+          }
+          setScore(score, best);
+          setOverlay("Game over", subtitle, true);
+          playBtn.textContent = "Play again";
+        }
+        function win() {
+          state = "dead";
+          let subtitle = "Cleared! " + score;
+          if (score > best) {
+            best = score; localStorage.setItem(BEST_KEY, String(best));
+            subtitle = "New best · " + best;
+          }
+          setScore(score, best);
+          setOverlay("You win!", subtitle, true);
+          playBtn.textContent = "Play again";
+        }
+        function update() {
+          if (state !== "play") return;
+          ball.x += ball.vx; ball.y += ball.vy;
+          if (ball.x < BALL_R || ball.x > W - BALL_R) ball.vx *= -1;
+          if (ball.y < BALL_R) ball.vy = Math.abs(ball.vy);
+          // paddle
+          if (ball.y + BALL_R >= H - 40 && ball.y < H - 40 + PADDLE_H &&
+              ball.x > paddleX && ball.x < paddleX + PADDLE_W && ball.vy > 0) {
+            ball.vy = -Math.abs(ball.vy);
+            const hit = (ball.x - paddleX) / PADDLE_W - 0.5;
+            ball.vx = hit * 8;
+          }
+          if (ball.y > H) { die(); return; }
+          // bricks
+          for (const b of bricks) {
+            if (!b.alive) continue;
+            if (ball.x > b.x && ball.x < b.x + b.w && ball.y > b.y && ball.y < b.y + b.h) {
+              b.alive = false;
+              ball.vy *= -1;
+              score += 10; setScore(score, best);
+              break;
+            }
+          }
+          if (bricks.every((b) => !b.alive)) win();
+        }
+        function draw() {
+          ctx.fillStyle = "#070908"; ctx.fillRect(0, 0, W, H);
+          for (const b of bricks) {
+            if (!b.alive) continue;
+            ctx.fillStyle = b.color;
+            ctx.beginPath();
+            ctx.roundRect(b.x, b.y, b.w, b.h, 3);
+            ctx.fill();
+          }
+          ctx.fillStyle = "#a8c9ad";
+          ctx.beginPath();
+          ctx.roundRect(paddleX, H - 40, PADDLE_W, PADDLE_H, 4);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI * 2);
+          ctx.fillStyle = "#c5ddc8";
+          ctx.fill();
+          if (state === "play") {
+            ctx.font = "600 28px Syne, sans-serif";
+            ctx.fillStyle = "rgba(232,238,233,0.12)";
+            ctx.textAlign = "center";
+            ctx.fillText(String(score), W / 2, 36);
+          }
+        }
+        function loop() {
+          update(); draw();
+          if (state === "play") raf = requestAnimationFrame(loop);
+        }
+        return {
+          name: "breakout", label: "Breakout",
+          hint: "Mouse · Touch · ← →",
+          controls: "Bounce the ball. Clear all bricks.",
+          howto: "Move the paddle left/right. Keep the ball in play and smash every brick. Clear the board to win.",
+          activate() {
+            stopLoop(); reset(); state = "ready";
+            setOverlay("", "", false);
+            hint.textContent = this.hint; controlsHint.textContent = this.controls;
+            titleEl.textContent = this.label;
+            playBtn.textContent = "Play";
+            clearTouch();
+            addTouch("←", () => { if (state === "play") paddleX = Math.max(0, paddleX - 36); });
+            addTouch("→", () => { if (state === "play") paddleX = Math.min(W - PADDLE_W, paddleX + 36); });
+            draw();
+          },
+          action(fromButton) {
+            if (state === "ready" || state === "dead") {
+              if (!fromButton) return;
+              reset(); state = "play"; setOverlay("", "", false);
+              playBtn.textContent = "Playing…";
+              loop();
+            }
+          },
+          key(e) {
+            if (state !== "play") return;
+            if (e.code === "ArrowLeft" || e.code === "KeyA") { e.preventDefault(); paddleX = Math.max(0, paddleX - 28); }
+            if (e.code === "ArrowRight" || e.code === "KeyD") { e.preventDefault(); paddleX = Math.min(W - PADDLE_W, paddleX + 28); }
+          },
+          pointer(x) {
+            if (state === "play") paddleX = Math.max(0, Math.min(W - PADDLE_W, x - PADDLE_W / 2));
+          },
+          deactivate() { stopLoop(); state = "ready"; }
+        };
+      })();
+
+
+      const all = { flappy, snake: snakeGame, guess: guessGame, car: carGame, pong: pongGame, breakout: breakoutGame };
       let current = flappy;
 
       function switchGame(name) {
@@ -3168,6 +3843,21 @@
           swipeStart = { x: e.clientX, y: e.clientY };
         }
       });
+      canvas.addEventListener("pointermove", (e) => {
+        if (statePlaying()) {
+          const rect = canvas.getBoundingClientRect();
+          const scaleX = W / rect.width;
+          const scaleY = H / rect.height;
+          const x = (e.clientX - rect.left) * scaleX;
+          const y = (e.clientY - rect.top) * scaleY;
+          if (active === "pong" && current.pointer) current.pointer(y);
+          if (active === "breakout" && current.pointer) current.pointer(x);
+        }
+      });
+      function statePlaying() {
+        return true;
+      }
+
       canvas.addEventListener("pointerup", (e) => {
         if (active === "snake" && swipeStart && current.swipe) {
           current.swipe(e.clientX - swipeStart.x, e.clientY - swipeStart.y);
