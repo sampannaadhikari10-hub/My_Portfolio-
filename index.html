@@ -6,6 +6,11 @@
   <title>Sampanna Adhikari</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23070908'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='monospace' font-size='14' font-weight='700' fill='%23a8c9ad'%3E%26gt%3B_%3C/text%3E%3C/svg%3E" />
   <meta name="description" content="Sampanna Adhikari — 14, Nepal. Cybersecurity, Python, C, C++, HTML & JavaScript." />
+  <meta name="theme-color" content="#070908" />
+  <meta name="color-scheme" content="dark" />
+  <meta property="og:title" content="Sampanna Adhikari" />
+  <meta property="og:description" content="14 · Nepal · Security · Builder" />
+  <meta name="twitter:card" content="summary" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
@@ -1132,6 +1137,38 @@
       .journey { display: none; }
     }
 
+    
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(120%);
+      z-index: 60;
+      padding: 0.65rem 1.1rem;
+      border-radius: 9999px;
+      font-family: var(--font-mono);
+      font-size: var(--2xs);
+      letter-spacing: 0.06em;
+      color: var(--accent-fg);
+      background: var(--accent);
+      box-shadow: 0 8px 32px rgb(0 0 0 / 0.4);
+      opacity: 0;
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    body.page-in {
+      animation: page-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    @keyframes page-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
     /* Soft cursor glow */
     .cursor-glow {
       pointer-events: none;
@@ -1411,7 +1448,7 @@
     }
   </style>
 </head>
-<body>
+<body class="page-in">
   <div class="grid-bg" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
@@ -1460,6 +1497,7 @@
     </div>
   </nav>
 
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <a href="#about" class="sr-only" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Skip to content</a>
 
   <!-- Nav -->
@@ -1756,7 +1794,7 @@
         </header>
         <ul class="contact-grid" style="list-style:none;">
           <li>
-            <a class="channel" href="mailto:sampannaadhikari10@gmail.com?subject=Hey%20Sampanna">
+            <a class="channel" href="mailto:sampannaadhikari10@gmail.com?subject=Hey%20Sampanna" id="email-channel">
               <div class="channel-top">
                 <span class="channel-icon">
                   <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
@@ -1765,7 +1803,7 @@
               </div>
               <p class="channel-label">Email</p>
               <p class="channel-value">sampannaadhikari10@gmail.com</p>
-              <p class="channel-hint">The fastest way to reach me.</p>
+              <p class="channel-hint">Click to mail · long-press / right-click to copy</p>
             </a>
           </li>
           <li>
@@ -1821,7 +1859,7 @@
         <span class="sep">/</span>
         <span id="year">2026</span>
       </p>
-      <p>still compiling. still learning.</p>
+      <p id="footer-tip">still compiling. still learning.</p>
     </div>
   </footer>
 
@@ -1942,6 +1980,8 @@
           "  joke              programmer joke",
           "  coffee            fuel check",
           "  hi                say hello",
+          "  ping              pong",
+          "  uptime            session time",
           "  help              this list"
         );
       }
@@ -2115,6 +2155,17 @@
 
       if (key === "hello" || key === "hi" || key === "hey") {
         return out("hey. type help — or play if you're bored.");
+      }
+
+      if (key === "ping") {
+        return out("pong. latency: 0ms (it's your browser).");
+      }
+
+      if (key === "uptime") {
+        const sec = Math.floor(performance.now() / 1000);
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        return out(`session uptime: ${m}m ${s}s — still here. still curious.`);
       }
 
       if (key === "matrix" || key === "cmatrix") {
@@ -3415,6 +3466,94 @@
       setTimeout(step, 200);
     })();
 
+
+
+    // —— Polish: toast, tips, shortcuts, konami ——
+    (function polish() {
+      const toastEl = document.getElementById("toast");
+      let toastTimer = null;
+      window.showToast = function (msg) {
+        if (!toastEl) return;
+        toastEl.textContent = msg;
+        toastEl.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2200);
+      };
+
+      // Copy email on contextmenu / alt-click
+      const email = document.getElementById("email-channel");
+      if (email) {
+        email.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          const addr = "sampannaadhikari10@gmail.com";
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(addr).then(() => showToast("email copied")).catch(() => {});
+          } else {
+            showToast(addr);
+          }
+        });
+      }
+
+      // Rotating footer tips
+      const tipEl = document.getElementById("footer-tip");
+      const tips = [
+        "still compiling. still learning.",
+        "type play in the lab if you're bored.",
+        "break it. understand it. rebuild it.",
+        "nepal time never sleeps.",
+        "press / to jump into the terminal.",
+      ];
+      let tipI = 0;
+      if (tipEl) {
+        setInterval(() => {
+          tipI = (tipI + 1) % tips.length;
+          tipEl.style.opacity = "0";
+          setTimeout(() => {
+            tipEl.textContent = tips[tipI];
+            tipEl.style.opacity = "1";
+          }, 280);
+        }, 5000);
+        tipEl.style.transition = "opacity 0.28s ease";
+      }
+
+      // / focuses terminal (when not typing in an input)
+      window.addEventListener("keydown", (e) => {
+        if (e.key !== "/" && e.key !== "`") return;
+        const t = e.target;
+        if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+        const play = document.getElementById("play");
+        // don't steal keys during games
+        if (play && !play.classList.contains("play-locked")) {
+          const r = play.getBoundingClientRect();
+          if (r.top < window.innerHeight && r.bottom > 0) return;
+        }
+        e.preventDefault();
+        const lab = document.getElementById("lab");
+        if (lab) lab.scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(() => {
+          window.__termTouched = true;
+          const input = document.querySelector("#term-body .term-input");
+          if (input) input.focus({ preventScroll: true });
+          showToast("terminal ready");
+        }, 450);
+      });
+
+      // Konami code → unlock arcade + toast
+      const seq = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","KeyB","KeyA"];
+      let si = 0;
+      window.addEventListener("keydown", (e) => {
+        if (e.code === seq[si]) {
+          si++;
+          if (si === seq.length) {
+            si = 0;
+            if (typeof unlockPlayArcade === "function") unlockPlayArcade(true);
+            showToast("konami unlocked the arcade");
+          }
+        } else {
+          si = e.code === seq[0] ? 1 : 0;
+        }
+      });
+    })();
 
   </script>
 </body>
