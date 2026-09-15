@@ -1998,6 +1998,7 @@
           "  weather           forecast (sort of)",
           "  sl                oops, typo",
           "  credits           who built this",
+          "  ask <text>        talk to the local AI",
           "  help              this list",
           "",
           "more",
@@ -2168,16 +2169,98 @@
         return out(cmd.slice(5));
       }
 
-      if (key === "sudo" || key.startsWith("sudo ")) {
-        return err("permission denied. you're 14. give it a few years.");
+      // —— sudo family (unique replies per command) ——
+      if (key === "sudo hire me" || key === "sudo hire-me" || key === "hire me") {
+        return out(
+          "application received.",
+          "status: under review by future-you.",
+          "requirement: keep shipping. keep learning.",
+          "tip: type contact — then send the real email."
+        );
+      }
+      if (key === "sudo make a pizza" || key === "sudo make pizza" || key === "sudo pizza") {
+        return out(
+          "ordering from /dev/kitchen...",
+          "  crust    ████████░░ 80%",
+          "  cheese   ██████░░░░ 60%",
+          "  pineapple? denied by policy.",
+          "pizza will be ready never. this is a terminal."
+        );
+      }
+      if (key === "sudo make me a sandwich" || key === "sudo sandwich" || key === "make me a sandwich") {
+        return out("okay.", "🥪 imaginary sandwich delivered.", "(sudo makes everything easier.)");
+      }
+      if (key === "sudo make coffee" || key === "sudo coffee") {
+        return out("brewing with elevated privileges...", "error: still no kettle in PATH.", "try: coffee");
+      }
+      if (key === "sudo give me root" || key === "sudo root" || key === "sudo get root") {
+        return err("sudo: root is earned, not given. try reading source instead.");
+      }
+      if (key === "sudo passwd" || key === "sudo passwd root") {
+        return err("passwd: Authentication token manipulation error (because this isn't Linux).");
+      }
+      if (key === "sudo vim" || key === "sudo nano" || key === "sudo emacs") {
+        return err("sudo: editing the universe is out of scope. also you can't exit vim.");
+      }
+      if (key === "sudo rm -rf /" || key === "sudo rm -rf /*" || key === "sudo rm -rf ~") {
+        return err("sudo: removing the universe is above your pay grade. rank: student.");
+      }
+      if (key === "sudo su" || key === "sudo -i" || key === "sudo bash" || key === "sudo sh") {
+        return err("no shell for you. stay in userland, explorer.");
+      }
+      if (key === "sudo reboot" || key === "sudo shutdown" || key === "sudo poweroff" || key === "sudo halt") {
+        return out(
+          "Broadcast message from root_access_13:",
+          "  THE SYSTEM IS GOING DOWN... just kidding.",
+          "session stays up. unlike your expectations."
+        );
+      }
+      if (key === "sudo killall" || key === "sudo kill -9 -1") {
+        return err("sudo: mass process murder blocked. the tab would miss you.");
+      }
+      if (key === "sudo chmod 777 /" || key === "sudo chmod -R 777 /") {
+        return err("sudo: 777 is not a personality. permissions stay tight.");
+      }
+      if (key === "sudo apt install root" || key === "sudo apt install freedom") {
+        return out("E: Unable to locate package. freedom isn't in the apt cache — you build it.");
+      }
+      if (key === "sudo" || key === "sudo ") {
+        return err("sudo: a password is required — and also, you're 14. try a more specific spell.");
+      }
+      if (key.startsWith("sudo ")) {
+        const arg = key.slice(5).trim();
+        const replies = [
+          `sudo: ${arg}: command not allowed for uid=${site.age}`,
+          `sorry, user ${site.handle} is not in the sudoers file. this incident will be reported to curiosity.`,
+          `sudo: ${arg}: nice try. permission still denied.`,
+          `sudo: evaluating "${arg}"... verdict: nah.`,
+          `sudo: ${arg}: requires clearance level "actually knows C".`,
+        ];
+        return err(replies[Math.floor(Math.random() * replies.length)]);
       }
 
-      if (key === "rm -rf /" || key.startsWith("rm -rf")) {
-        return err("absolutely not.");
+      if (key === "rm -rf /" || key === "rm -rf /*" || key === "rm -rf ~") {
+        return err("rm: refusing to delete reality. touch grass instead.");
+      }
+      if (key.startsWith("rm -rf")) {
+        return err("rm: recursive delete blocked. this lab has backups of dignity.");
+      }
+      if (key.startsWith("rm ")) {
+        return err("rm: nothing was harmed. files are feelings here.");
       }
 
-      if (key === "hack" || key === "hack the planet" || key.startsWith("nmap")) {
-        return err("nice try. that's not how this works.");
+      if (key === "hack the planet") {
+        return out("HACK THE PLANET!", "...said every 90s movie. still no root though.");
+      }
+      if (key === "hack" || key.startsWith("hack ")) {
+        return err("hacking requires scope, consent, and coffee. you have curiosity. start there.");
+      }
+      if (key.startsWith("nmap")) {
+        return out(
+          "Starting Nmap 7.94 ( fake ) at nepal-time",
+          "Note: host seems down. (or you're scanning localhost in a browser)",
+          "Nmap done: 0 IP addresses (0 hosts up)"
+        );
       }
 
 
@@ -2330,9 +2413,15 @@
         );
       }
 
-      if (key === "secret" || key === "easter") {
+      if (key === "secret" || key === "easter" || key === "secrets") {
         return out(
-          "you found a hidden door.",
+          "hidden door unlocked. try:",
+          "  rickroll · xyzzy · starwars · weather · matrix",
+          "  flip · dance · shrug · status · 42 · open sesame",
+          "  sudo make a pizza · sudo hire me · sudo sandwich",
+          "  achievements · konami · credits · cowsay · banner",
+          "  forkbomb · kill · apt update · top · sl",
+          "  ask <msg> · motd · git status · uuid · hash",
           "keep breaking things. keep building better ones.",
           "— root_access_13"
         );
@@ -2490,19 +2579,32 @@
         );
       }
 
-      if (key === "root" || key === "su") {
-        return err("nice try. root doesn't live here anymore.");
+      if (key === "root" || key === "su" || key === "su -") {
+        return err("root moved out. left a sticky note: 'learn user mode first'.");
       }
 
-      if (key === "rickroll" || key === "never gonna give you up") {
-        return out("you've been rickrolled.", "(no link, you're welcome.)");
+      if (
+        key === "rickroll" ||
+        key === "rick roll" ||
+        key === "never gonna give you up" ||
+        key === "rr" ||
+        key === "rick"
+      ) {
+        return [
+          { kind: "out", text: "never gonna give you up," },
+          { kind: "out", text: "never gonna let you down..." },
+          { kind: "out", text: "opening the classic in a new tab 🎵" },
+          { kind: "__open__", text: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" },
+        ];
       }
 
       if (key === "are you ai" || key === "are you real" || key === "who are you") {
         return [{ kind: "__ai_greet__", text: "" }];
       }
 
-
+      if (key === "kill -9 -1" || key === "kill -9 1") {
+        return err("kill: not today, chaos agent. pid 1 is sacred.");
+      }
       if (key === "kill" || key === "kill -9" || key.startsWith("kill ") || key === "pkill" || key.startsWith("pkill ")) {
         return err("nice try you little engineer 😉");
       }
@@ -2511,11 +2613,125 @@
         key === ":(){ :|:& };:" ||
         key === "forkbomb" ||
         key === "fork bomb" ||
-        key === "fork" ||
         key.includes(":(){") ||
         key.includes(":|:&")
       ) {
-        return err("kernel refuses. this is a browser, not a bomb range.");
+        return err("fork bomb defused. browser tab says thanks for not melting it.");
+      }
+      if (key === "fork") {
+        return out("forked. you now have 2x curiosity. (still one process.)");
+      }
+
+      // —— more secret / custom commands ——
+      if (key === "xyzzy" || key === "plugh") {
+        return out("a hollow voice says 'fool'.");
+      }
+      if (key === "make coffee" || key === "brew") {
+        return out("brewing...", "error: water not found in PATH. install /usr/bin/kettle.");
+      }
+      if (key === "starwars" || key === "star wars") {
+        return out(
+          "   .        *   .     .      *",
+          "     *   .    A long time ago",
+          "  .     *    in a terminal far,",
+          "    *        far away...",
+          "use: telnet towel.blinkenlights.nl (not here)"
+        );
+      }
+      if (key === "weather" || key === "wttr") {
+        return out(
+          "Kathmandu · approx",
+          "  🌤  pleasant for shipping code",
+          "  humidity: high curiosity",
+          "  forecast: more learning"
+        );
+      }
+      if (key === "joke -cyber" || key === "joke security") {
+        return out("I told a security joke... but it was classified.");
+      }
+      if (key === "vim" || key === "vi") {
+        return out(
+          "you are in vim (simulated).",
+          "to escape: type :q! and pretend it worked.",
+          "(or just type clear)"
+        );
+      }
+      if (key === ":q" || key === ":q!" || key === ":wq") {
+        return out("thanks for visiting vim. you may leave freely.");
+      }
+      if (key === "emacs") {
+        return err("emacs: this terminal is too small for your operating system.");
+      }
+      if (key === "exit 0" || key === "true") {
+        return out("(exit status 0) — success, somehow.");
+      }
+      if (key === "false" || key === "exit 1") {
+        return err("(exit status 1) — as requested.");
+      }
+      if (key === "whoami --all" || key === "whoami -a") {
+        return out(
+          `name: ${site.name}`,
+          `handle: ${site.handle}`,
+          `age: ${site.age}`,
+          `loc: ${site.country}`,
+          "mode: building"
+        );
+      }
+      if (key === "cat /etc/passwd" || key === "cat /etc/shadow") {
+        return err("cat: permission denied. (good instincts, wrong target.)");
+      }
+      if (key === "curl rickroll" || key === "wget rickroll") {
+        return [
+          { kind: "out", text: "connecting to youtube..." },
+          { kind: "__open__", text: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" },
+        ];
+      }
+      if (key === "open sesame" || key === "abracadabra") {
+        return out("the wall shimmers...", "a small door labeled `play` appears. type play.");
+      }
+      if (key === "42" || key === "answer") {
+        return out("42. now what was the question?");
+      }
+      if (key === "hello world" || key === "helloworld") {
+        return out("Hello, World.", "welcome to the oldest greeting in the craft.");
+      }
+      if (key === "neofetch --secret" || key === "fetch --secret") {
+        return out(
+          "secret fetch:",
+          "  easter_eggs: many",
+          "  rickroll: armed",
+          "  sudo: still no"
+        );
+      }
+      if (key === "credits" || key === "about site") {
+        return out(
+          "site: single html, pure chaos + care",
+          "built for: curiosity",
+          `by: ${site.handle}`
+        );
+      }
+      if (key === "flip" || key === "tableflip") {
+        return out("(╯°□°）╯︵ ┻━┻");
+      }
+      if (key === "unflip" || key === "puttableback") {
+        return out("┬─┬ ノ( ゜-゜ノ)");
+      }
+      if (key === "shrug") {
+        return out("¯\\_(ツ)_/¯");
+      }
+      if (key === "dance") {
+        return out("♪┏(・o･)┛ ♪ ┗( ･o･)┓♪");
+      }
+      if (key === "sleep" || key === "zzz") {
+        return out("sleep ∞", "just kidding. builders don't sleep. (please sleep.)");
+      }
+      if (key === "status") {
+        return out(
+          "lab: online",
+          "arcade: " + (window.__playUnlocked ? "unlocked" : "locked (type play)"),
+          "mood: moss green",
+          "bugs: only the fun kind"
+        );
       }
 
       if (key === "apt update" || key === "apt-get update" || key === "sudo apt update") {
@@ -2594,6 +2810,216 @@
         return out("y", "y", "y", "y", "y", "ok that's enough.");
       }
 
+
+      if (key === "do a barrel roll" || key === "barrel roll") {
+        document.body.style.transition = "transform 1s ease";
+        document.body.style.transform = "rotate(360deg)";
+        setTimeout(() => { document.body.style.transform = ""; }, 1100);
+        return out("barrel roll complete.");
+      }
+      if (key === "party" || key === "party mode") {
+        return out("🎉 party mode: ON", "confetti: imaginary", "music: type rickroll");
+      }
+      if (key === "magic" || key === "magic word") {
+        return out("please.", "(the real magic word.)");
+      }
+      if (key === "password" || key === "passwords") {
+        return out("hunter2", "*******", "(classic. don't actually use that.)");
+      }
+      if (key === "sudo make me a coffee" || key === "make coffee") {
+        return out("brewing...", "error: water not found. install kettle first.");
+      }
+      if (key === "ls -la /" || key === "ls /") {
+        return out(
+          "drwxr-xr-x  root  root  bin",
+          "drwxr-xr-x  root  root  etc",
+          "drwx------  you   you   home",
+          "drwxr-xr-x  root  root  lab",
+          "drwx------  you   you   secrets (type: secret)"
+        );
+      }
+      if (key === "cat readme" || key === "cat README" || key === "cat readme.md") {
+        return out(
+          "# README",
+          "You found the lab.",
+          "Type help. Type play. Type secret.",
+          "Build something today."
+        );
+      }
+      if (key === "ping google.com" || key === "ping 8.8.8.8") {
+        return out(
+          "PING google.com: icmp not available in browser.",
+          "spiritual latency: low. curiosity: high."
+        );
+      }
+      if (key === "whoami --verbose" || key === "whoami -v") {
+        return out(
+          site.handle,
+          `name: ${site.name}`,
+          `age: ${site.age}`,
+          `locale: ${site.country}`,
+          "role: student / builder",
+          "status: still compiling"
+        );
+      }
+
+
+
+      if (key === "ask" || key === "ai" || key === "chat") {
+        return out("usage: ask <anything>", "example: ask how do i learn security", "i talk casual. i don't pretend to know everything.");
+      }
+
+      if (key === "motd" || key === "banner day") {
+        return out(
+          "message of the day:",
+          "  ship something small.",
+          "  break it safely.",
+          "  sleep eventually."
+        );
+      }
+
+      if (key === "cal" || key === "calendar") {
+        const d = new Date();
+        return out(
+          d.toLocaleString("en-GB", { timeZone: site.timezone, weekday: "long", year: "numeric", month: "long", day: "numeric" }),
+          "timezone: Asia/Kathmandu"
+        );
+      }
+
+      if (key === "df" || key === "df -h") {
+        return out(
+          "Filesystem      Size  Used  Avail",
+          "browser         ∞     12%   still-room",
+          "curiosity       ∞     91%   refill-daily"
+        );
+      }
+
+      if (key === "free" || key === "free -h") {
+        return out(
+          "              total   used   free",
+          "mem:          16G     ok     enough",
+          "brain:        low     high   needs-sleep"
+        );
+      }
+
+      if (key === "uname -r") {
+        return out("14.0.0-nepal-custom");
+      }
+
+      if (key === "hostname") {
+        return out("lab.nepal.local");
+      }
+
+      if (key === "env" || key === "printenv") {
+        return out(
+          "USER=" + site.handle,
+          "HOME=/home/" + site.handle,
+          "SHELL=lab-terminal",
+          "EDITOR=vim (good luck)",
+          "LANG=en_NP.UTF-8",
+          "MOOD=building"
+        );
+      }
+
+      if (key === "alias") {
+        return out(
+          "alias ll='ls -la'",
+          "alias please='sudo'",
+          "alias g='git'",
+          "alias vibe='fortune'"
+        );
+      }
+
+      if (key === "history -c") {
+        historyLog = [];
+        return out("history cleared. the past is optional.");
+      }
+
+      if (key === "which python" || key === "which python3") {
+        return out("/usr/bin/python3  (conceptually)");
+      }
+
+      if (key === "python" || key === "python3" || key === "python --version") {
+        return out("Python 3.12.0 (lab edition)", ">>> not a real REPL. type exit in your head.");
+      }
+
+      if (key === "node" || key === "node -v") {
+        return out("v20.x (whatever your browser is)", "this whole site is the node process.");
+      }
+
+      if (key === "git status") {
+        return out(
+          "On branch main",
+          "Your branch is ahead of 'origin/dreams' by ∞ commits.",
+          "nothing to commit, working tree clean (emotionally: messy)"
+        );
+      }
+
+      if (key === "git log" || key === "git log --oneline") {
+        return out(
+          "a1b2c3d  (HEAD) still learning",
+          "f00dcafe  added terminal chaos",
+          "c0ffee00  first commit: exists"
+        );
+      }
+
+      if (key === "curl localhost" || key === "curl 127.0.0.1") {
+        return out("200 OK", "body: you are here.");
+      }
+
+      if (key === "base64" || key.startsWith("base64 ")) {
+        const s = key === "base64" ? site.handle : raw.trim().slice(7);
+        try {
+          return out(btoa(unescape(encodeURIComponent(s))));
+        } catch (e) {
+          return err("base64: failed");
+        }
+      }
+
+      if (key.startsWith("rev ")) {
+        return out(raw.trim().slice(4).split("").reverse().join(""));
+      }
+
+      if (key === "wc" || key.startsWith("wc ")) {
+        const s = key === "wc" ? "hello lab" : raw.trim().slice(3);
+        return out(`${s.split(/\\s+/).filter(Boolean).length} words, ${s.length} chars`);
+      }
+
+      if (key === "factor" || key.startsWith("factor ")) {
+        let n = parseInt(key === "factor" ? "42" : key.slice(7), 10);
+        if (!n || n < 1) return err("factor: need a positive integer");
+        const f = [];
+        let x = n;
+        for (let p = 2; p * p <= x; p++) {
+          while (x % p === 0) { f.push(p); x /= p; }
+        }
+        if (x > 1) f.push(x);
+        return out(n + ": " + f.join(" "));
+      }
+
+      if (key === "random" || key === "rand") {
+        return out(String(Math.floor(Math.random() * 1000)));
+      }
+
+      if (key === "uuid") {
+        const u = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+          const r = Math.random() * 16 | 0;
+          const v = c === "x" ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+        });
+        return out(u);
+      }
+
+      if (key === "hash" || key.startsWith("hash ")) {
+        const s = key === "hash" ? site.handle : raw.trim().slice(5);
+        let h = 0;
+        for (let i = 0; i < s.length; i++) h = Math.imul(31, h) + s.charCodeAt(i) | 0;
+        return out("hash32: " + (h >>> 0).toString(16));
+      }
+
+      if (key === "time" && false) { /* date handles time */ }
+
+
       return err(`${cmd}: command not found. type help`);
 
     }
@@ -2659,42 +3085,167 @@
       return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
-    const AI_GREETINGS = [
-      ["hey! good to see you in here.", "I'm just a little script, but I'll do my best — type help to see what I can do."],
-      ["hi there 👋", "poking around the terminal? smart move. try 'projects' or 'joke' next."],
-      ["oh, hello.", "didn't expect a visitor. everything's stable here. how can I help?"],
-      ["hey — " + (typeof site !== "undefined" ? site.name.split(" ")[0] : "you") + "'s AI-ish terminal here.", "no backend, no API key, just javascript pretending. ask away with 'help'."],
-      ["sup.", "still compiling thoughts over here. try 'fortune' if you want a random one."],
-      ["hello, human.", "confirmed: you are not a bot. probably. type 'help' to continue."]
-    ];
+    // Local "AI" — no API, pattern smart, talks casual like the lab owner
+    function aiReply(raw) {
+      const t = raw.toLowerCase().trim();
+      const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+      // greetings
+      if (/^(hi|hello|hey|yo|sup|howdy|hola|namaste)\b/.test(t) || t === "are you ai" || t === "who are you" || t === "are you real") {
+        return pick([
+          ["yo.", "just a little script living in this terminal. no servers, pure js.", "type help — or play if you're bored."],
+          ["hey bro.", "i'm the lab's fake AI. don't expect chatgpt energy, but i got jokes.", "try fortune or joke."],
+          ["sup.", "sampanna's terminal speaking. kind of. type secret for the hidden menu."],
+          ["namaste.", "welcome to the lab. still compiling, still learning — same as the owner."],
+          ["oh hey.", "you found the talking part. i'm dumb on purpose. help is real though."],
+        ]);
+      }
+      if (/how are you|how's it going|how r u|you good/.test(t)) {
+        return pick([
+          ["running fine. cpu's imaginary, vibes are real."],
+          ["good. moss theme loaded, zero crashes so far. you?"],
+          ["alive. caffeinated? nah. curious? always."],
+        ]);
+      }
+      if (/what('?s| is) your name|who made you|who built/.test(t)) {
+        return [["built by sampanna. 14. nepal.", "single html file. no framework flex — just grind."]];
+      }
+      if (/how old|your age/.test(t)) {
+        return [["the site says 14. the code feels older. time is weird in terminals."]];
+      }
+      if (/where.*from|location|nepal/.test(t)) {
+        return pick([
+          ["nepal. kathmandu time on the clock up top.", "good place to build when the wifi cooperates."],
+          ["rooted in nepal. packets travel farther than i do."],
+        ]);
+      }
+      if (/what can you do|help me|commands/.test(t)) {
+        return [["type help for the real list.", "or secret if you want the shady menu.", "play unlocks games."]];
+      }
+      if (/bored|games|play something/.test(t)) {
+        return [["type play — arcade unlocks.", "flappy, snake, pong, the whole chaos set."]];
+      }
+      if (/joke|funny|make me laugh/.test(t)) {
+        return [["type joke — i got 60+ of them.", "or fortune if you want wise instead of unserious."]];
+      }
+      if (/hack|hacker|security|cyber/.test(t)) {
+        return pick([
+          ["security starts with curiosity, not rootkits.", "break it in a lab. fix it for real."],
+          ["cyber's the long game. learn systems, then break them ethically.", "also: never sudo rm -rf your life."],
+        ]);
+      }
+      if (/python|javascript|c\+\+|coding|program/.test(t)) {
+        return pick([
+          ["stack here: python, c, cpp, html, js, security.", "pick one, go deep. shallow is the trap."],
+          ["code more, scroll less. that's the whole tutorial."],
+        ]);
+      }
+      if (/love you|i like you|you('?re| are) cool|thanks|thank you|thx/.test(t)) {
+        return pick([
+          ["appreciate it. now go ship something."],
+          ["np. come back when you break something interesting."],
+          ["respect. keep building, bro."],
+        ]);
+      }
+      if (/bye|goodbye|see you|cya|exit chat/.test(t)) {
+        return pick([
+          ["later. terminal stays warm."],
+          ["cya. don't forget to commit."],
+          ["peace. type clear if you want a clean slate."],
+        ]);
+      }
+      if (/rickroll|rick/.test(t)) {
+        return [["you know what to type.", "rickroll. full word. no mercy."]];
+      }
+      if (/sudo/.test(t)) {
+        return [["sudo won't save you here.", "but sudo make a pizza is elite. try it."]];
+      }
+      if (/weather|hot|cold|rain/.test(t)) {
+        return [["type weather for the fake kathmandu report.", "real forecast: more learning."]];
+      }
+      if (/meaning of life|42|purpose/.test(t)) {
+        return [["42.", "or ship code. same energy."]];
+      }
+      if (/\?$/.test(t) || /^(what|why|how|when|where|who|can you|do you|is there)\b/.test(t)) {
+        return pick([
+          ["good question. i don't have the full answer — neither does anyone at 14.", "type help or just experiment."],
+          ["hmm. my training data is basically this html file.", "try projects or contact if you're looking for the human."],
+          ["short answer: idk for sure.", "long answer: type fortune and pretend it's wisdom."],
+          ["solid ask. i can point you: help, secret, play, contact."],
+        ]);
+      }
+      if (t.length > 2) {
+        return pick([
+          ["heard you.", "i'm not that smart — pattern matching with attitude.", "help / secret / play are the real moves."],
+          ["processing... done.", "best i got is: keep building. type joke if you need a break."],
+          ["noted.", "this AI is local and slightly unhinged. ask something else or type help."],
+          ["lol ok.", "try being more specific or just run a real command."],
+          ["i felt that.", "anyway — fortune, joke, or play. your call."],
+        ]);
+      }
+      return [["...","type help."]];
+    }
+
+    async function speakAI(userText, linesToShow) {
+      lines = [...lines, { kind: "in", text: userText }];
+      render();
+      await delay(220 + Math.random() * 200);
+      lines = [...lines, { kind: "thinking", text: "ai is typing" }];
+      render();
+      await delay(500 + Math.random() * 600);
+      lines = lines.slice(0, -1);
+      const reply = linesToShow || aiReply(userText);
+      lines = [...lines, ...reply.map((t) => ({ kind: "ai", text: t }))];
+      render();
+    }
 
     async function submit(cmd) {
       window.__termTouched = true;
       const trimmed = cmd.trim();
       if (!trimmed) return;
-      const result = runCommand(trimmed);
       historyLog = [trimmed, ...historyLog.filter((x) => x !== trimmed)].slice(0, 40);
       histIndex = -1;
       value = "";
 
+      const low = trimmed.toLowerCase();
+
+      // explicit AI chat: ask / ai / chat / say
+      if (/^(ask|ai|chat|say)\s+.+/.test(low) || low === "ai" || low === "chat") {
+        const msg = trimmed.replace(/^(ask|ai|chat|say)\s+/i, "").trim() || "hey";
+        await speakAI(trimmed, aiReply(msg));
+        return;
+      }
+
+      const result = runCommand(trimmed);
+
       if (result[0]?.kind === "__ai_greet__") {
-        lines = [...lines, { kind: "in", text: trimmed }];
-        render();
-        await delay(280 + Math.random() * 260);
-        lines = [...lines, { kind: "thinking", text: "ai is typing" }];
-        render();
-        await delay(650 + Math.random() * 500);
-        lines = lines.slice(0, -1);
-        const reply = AI_GREETINGS[Math.floor(Math.random() * AI_GREETINGS.length)];
-        lines = [...lines, ...reply.map((t) => ({ kind: "ai", text: t }))];
-        render();
+        await speakAI(trimmed);
+        return;
+      }
+
+      // natural language → AI instead of "command not found"
+      const isErr = result[0]?.kind === "err" && /command not found/.test(result[0]?.text || "");
+      const looksChat = /^(please|can you|could you|what|why|how|who|where|when|is |are |do |does |tell me|i |i'm|im |bro|dude)/i.test(trimmed)
+        || /\?$/.test(trimmed)
+        || (trimmed.split(/\s+/).length >= 4 && isErr);
+
+      if (isErr && looksChat) {
+        await speakAI(trimmed);
         return;
       }
 
       if (result[0]?.text === "__CLEAR__") {
         lines = [{ kind: "sys", text: `lab  ·  ${site.country.toLowerCase()}  ·  type help` }];
-      } else {
-        lines = [...lines, { kind: "in", text: trimmed }, ...result];
+        render();
+        return;
+      }
+
+      const openUrl = result.find((r) => r.kind === "__open__");
+      const visible = result.filter((r) => r.kind !== "__open__");
+      lines = [...lines, { kind: "in", text: trimmed }, ...visible];
+      if (openUrl && openUrl.text) {
+        lines = [...lines, { kind: "out", text: openUrl.text }];
+        try { window.open(openUrl.text, "_blank", "noopener,noreferrer"); } catch (_) {}
       }
       render();
     }
